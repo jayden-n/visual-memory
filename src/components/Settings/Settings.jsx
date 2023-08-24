@@ -7,10 +7,15 @@ import styles from './Settings.module.css';
 import RadioBox from '../RadioBox';
 import Counter from '../Counter/Counter';
 
-const Settings = () => {
+const Settings = ({ startGame }) => {
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [level, setLevel] = useState(LEVEL[0]);
   const [cardsCount, setCardsCount] = useState(INITIAL_CARDS_COUNT);
+
+  const onStartGameClick = () => {
+    startGame({ category, level, cardsCount });
+  };
+
   return (
     <div className={`${styles.settings} frosted`}>
       <h2>Settings</h2>
@@ -42,8 +47,14 @@ const Settings = () => {
           />
         ))}
       </div>
+      <button className={`${styles.button} frosted`} onClick={onStartGameClick}>
+        Start
+      </button>
     </div>
   );
 };
 
 export default Settings;
+Settings.propTypes = {
+  startGame: PropTypes.func.isRequired,
+};

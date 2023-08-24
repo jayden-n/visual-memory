@@ -2,18 +2,18 @@ import { useEffect, useState } from 'react';
 
 const getRandomPage = () => Math.round(Math.random() * (10 - 1) + 1);
 
-const useGetImages = () => {
+const useGetImages = (gameOptions) => {
   const [images, setImages] = useState([]);
 
   const buildUrl = () => {
     let url = new URL('https://api.pexels.com/v1/search');
     url.search = new URLSearchParams({
-      // TODO: change to a variable
-      query: 'nature',
+      query: gameOptions.category,
       orientation: 'square',
       size: 'small',
-      // TODO: change to a variable
-      per_page: 2,
+
+      // Half the cards
+      per_page: gameOptions.cardsCount / 2,
       // spice things/pages up when users already finish game
       page: getRandomPage(),
     });
@@ -31,8 +31,9 @@ const useGetImages = () => {
       .then((data) => setImages(data.photos));
   };
   useEffect(() => {
+    if (!gameOptions) return;
     fetchPics();
-  }, []);
+  }, [gameOptions]);
 
   return images;
 };
