@@ -8,7 +8,7 @@ import useGameLogic from '../../hooks/useGameLogic';
 import Card from '../Card/Card';
 import Result from '../Result/Result';
 
-const Board = ({ gameOptions }) => {
+const Board = ({ gameOptions, restartGame }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const images = useGetImages(gameOptions);
@@ -20,13 +20,15 @@ const Board = ({ gameOptions }) => {
 
   return (
     <div>
-      {isWin && <Result />}
+      {isWin && <Result restartGame={restartGame} />}
       {isLoading ? (
         <Loader />
       ) : (
-        cards.map((card) => (
-          <Card key={card.uniqueId} card={card} onCardClick={onCardClick} />
-        ))
+        <div className={`${styles.board}`}>
+          {cards.map((card) => (
+            <Card key={card.uniqueId} card={card} onCardClick={onCardClick} />
+          ))}
+        </div>
       )}
     </div>
   );
@@ -40,4 +42,5 @@ Board.propTypes = {
     cardsCount: PropTypes.number.isRequired,
     category: PropTypes.string.isRequired,
   }),
+  restartGame: PropTypes.func.isRequired,
 };
