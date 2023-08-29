@@ -5,18 +5,29 @@ import styles from './Board.module.css';
 import useGetImages from '../../hooks/useGetImages';
 import Loader from '../Loader';
 import useGameLogic from '../../hooks/useGameLogic';
+import Card from '../Card/Card';
 
 const Board = ({ gameOptions }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const images = useGetImages(gameOptions);
-  const cards = useGameLogic(images);
+  const { cards, onCardClick } = useGameLogic(images, gameOptions.level);
 
   useEffect(() => {
     if (images.length > 0) setIsLoading(false);
   }, [images]);
 
-  return <div>{isLoading && <Loader />}</div>;
+  return (
+    <div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        cards.map((card) => (
+          <Card key={card.uniqueId} card={card} onCardClick={onCardClick} />
+        ))
+      )}
+    </div>
+  );
 };
 
 export default Board;
