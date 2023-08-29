@@ -15,7 +15,7 @@ function App() {
   return (
     <>
       <Background />
-      <h1>Memory Game</h1>
+      <h1>Visual Memory</h1>
       {!gameOptions ? (
         <Settings startGame={startGame} />
       ) : (
