@@ -18,6 +18,9 @@ const LEVELS = {
 };
 
 const useGameLogic = (images, gameLevel) => {
+  const [isWin, setIsWin] = useState(false);
+  const [score, setScore] = useState(0);
+
   const [cards, setCards] = useState([]);
   const [visibleCards, setVisibleCards] = useState([]);
 
@@ -29,7 +32,7 @@ const useGameLogic = (images, gameLevel) => {
     const d = shuffleCards(c);
     setCards(d);
   };
-  console.log(images);
+  // console.log(images);
   const flipCard = (clickedCardId) => {
     const flippedCards = cards.map((card) => {
       if (card.uniqueId === clickedCardId) {
@@ -49,28 +52,49 @@ const useGameLogic = (images, gameLevel) => {
     }
   };
 
+  const updateScore = () => {
+    setScore((oldScore) => oldScore + 1);
+  };
+  const checkMatch = () => {
+    const visible = cards.filter(
+      (card) => visibleCards.indexOf(card.uniqueId) !== -1
+    );
+    const matched = visible[0].id === visible[1].id;
+
+    const updatedCards = cards.map((card) => {
+      if (visibleCards.indexOf(card.uniqueId) !== -1) {
+        card.isShown = false;
+        card.isFound = matched;
+      }
+      return card;
+    });
+
+    // flipping cards back to normal logic after an amount of time
+    setTimeout(() => {
+      setCards(updatedCards);
+      setVisibleCards([]);
+      if (matched) updateScore();
+    }, LEVELS[gameLevel]);
+  };
+
   //   console.log(images);
   useEffect(() => {
     if (images.length > 0) prepareCards();
   }, [images]);
 
-  // flipping cards back to normal logic after 1 sec
   useEffect(() => {
     if (visibleCards.length >= MAX_VISIBLE_CARDS) {
-      const updatedCards = cards.map((card) => {
-        if (visibleCards.indexOf(card.uniqueId) !== -1) {
-          card.isShown = false;
-        }
-        return card;
-      });
-
-      setTimeout(() => {
-        setCards(updatedCards);
-        setVisibleCards([]);
-      }, LEVELS[gameLevel]);
+      checkMatch();
     }
   }, [visibleCards]);
-  return { cards, onCardClick };
+
+  useEffect(() => {
+    if (images.length && score === images.length) {
+      setIsWin(true);
+    }
+  }, [score]);
+
+  return { cards, onCardClick, isWin };
 };
 
 export default useGameLogic;
